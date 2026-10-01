@@ -1,0 +1,19 @@
+# Aussie Growth
+
+> Aussie Growth is an Australian digital marketing studio. It builds websites, runs paid ads (Google, Meta, Instagram) and sets up AI and automation (CRM, instant replies, follow-up, booking) for tradies, home-service businesses and local businesses.
+
+Official website: https://www.aussiegrowth.agency/
+Phone: +61 493 721 273
+Email: meharmalik2026@gmail.com
+
+## Pages
+
+- [Home](https://www.aussiegrowth.agency/): what Aussie Growth does, featured work, FAQs and the quote form
+- [Web Development](https://www.aussiegrowth.agency/web-development/): business websites, redesigns, landing pages, quote and booking systems, and the build process
+- [Growth](https://www.aussiegrowth.agency/growth/): paid ads management and AI/automation services
+
+## Notes
+
+- Portfolio projects shown on the site are real websites built by Aussie Growth.
+- Photography and the brand film on the site are illustrative, not client footage.
+- The site publishes no client testimonials, ratings or performance statistics.

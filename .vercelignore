@@ -1,0 +1,9 @@
+.data
+tests
+scripts
+.env
+.env.*
+node_modules
+ADMIN-SETUP.md
+.git
+.gitignore

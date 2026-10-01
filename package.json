@@ -1,0 +1,25 @@
+{
+  "name": "aussie-growth",
+  "version": "1.0.0",
+  "description": "Aussie Growth website + quote admin",
+  "scripts": {
+    "dev": "node scripts/dev-server.js",
+    "prerender": "node scripts/prerender.mjs",
+    "test": "node tests/full-journey.mjs",
+    "capture": "node scripts/capture-projects.mjs",
+    "hash-password": "node scripts/hash-password.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "pg-mem": "^3.0.5",
+    "playwright": "^1.63.0"
+  },
+  "dependencies": {
+    "animejs": "^4.5.0",
+    "gsap": "^3.13.0",
+    "pg": "^8.13.0"
+  }
+}

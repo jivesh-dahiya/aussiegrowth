@@ -1,0 +1,102 @@
+/* ================= Service pages: shared layout ================= */
+/* Reuses tokens/components from base.css, sections.css, story.css.
+   Only the page-specific pieces — hero, capability list, split, tag —
+   live here. */
+
+.page-hero {
+  padding: clamp(150px, 22vh, 210px) var(--gutter) clamp(60px, 10vh, 110px);
+  max-width: var(--maxw); margin: 0 auto;
+  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(32px, 5vw, 72px); align-items: center;
+}
+.page-hero .eyebrow { margin-bottom: 18px; }
+/* Anime.js reveals these on load. If the script never arrives, the keyframe shows them anyway. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .page-hero h1:not(.is-shown), .js .page-hero .lede:not(.is-shown), .js .page-hero .page-ctas:not(.is-shown) { opacity: 0; animation: hero-failsafe 0.01s 2.5s forwards; }
+}
+@keyframes hero-failsafe { to { opacity: 1; } }
+.page-hero h1 { font-weight: 850; text-transform: uppercase; letter-spacing: -0.03em; line-height: 0.96; font-size: clamp(2.6rem, 6.2vw, 5.6rem); font-variation-settings: 'wdth' 112; }
+.page-hero .lede { max-width: 42ch; }
+.page-hero .page-ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+.page-media {
+  position: relative; aspect-ratio: 4 / 3; border-radius: var(--r-lg); overflow: hidden;
+  border: 1px solid var(--line); background: var(--card);
+}
+.page-media img, .page-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.page-media .tag { position: absolute; left: 16px; bottom: 16px; font-size: 0.72rem; letter-spacing: 0.08em; color: rgba(245, 243, 238, 0.85); background: rgba(8, 8, 8, 0.55); padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line-2); backdrop-filter: blur(6px); }
+@media (max-width: 900px) { .page-hero { grid-template-columns: 1fr; } .page-media { order: -1; } }
+
+/* ---- capability list (reuses .why-list dl look, one column of pairs) ---- */
+.caps { padding: clamp(70px, 11vh, 120px) var(--gutter); max-width: var(--maxw); margin: 0 auto; border-top: 1px solid var(--line); }
+.caps-head { display: grid; gap: 14px; margin-bottom: clamp(40px, 7vh, 80px); max-width: 60rem; }
+.caps-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; }
+.cap { background: #0d0d0d; padding: 26px 24px; }
+.cap b { display: block; font-size: 1rem; margin-bottom: 8px; letter-spacing: -0.01em; }
+.cap span { color: var(--muted); font-size: 0.88rem; line-height: 1.4; }
+
+/* ---- process (numbered, reuses .flow visual rhythm but simpler, no scrub) ---- */
+.process { padding: clamp(70px, 11vh, 120px) var(--gutter); max-width: var(--maxw); margin: 0 auto; border-top: 1px solid var(--line); }
+.process-head { margin-bottom: clamp(40px, 7vh, 80px); }
+.process-list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 28px; counter-reset: step; }
+.process-list li { position: relative; padding-top: 26px; border-top: 1px solid var(--line-2); }
+.process-list li::before { counter-increment: step; content: counter(step, decimal-leading-zero); position: absolute; top: -0.8em; left: 0; background: #080808; padding-right: 10px; font-family: var(--f-serif); font-style: italic; color: var(--gold); font-size: 1.1rem; }
+.process-list b { display: block; margin-bottom: 6px; font-size: 1.02rem; }
+.process-list span { color: var(--muted); font-size: 0.88rem; line-height: 1.4; }
+
+/* ---- split (Paid Ads / AI & Automations, side by side) ---- */
+.split { padding: clamp(70px, 11vh, 120px) var(--gutter); max-width: var(--maxw); margin: 0 auto; border-top: 1px solid var(--line); }
+.split-head { max-width: 52ch; margin-bottom: clamp(40px, 7vh, 80px); }
+.split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; }
+.split-col { background: #0d0d0d; padding: clamp(28px, 4vw, 42px); }
+.split-col .n { font-size: 0.72rem; letter-spacing: 0.2em; color: var(--muted); }
+.split-col h3 { font-weight: 800; font-size: clamp(1.3rem, 2.2vw, 1.7rem); margin: 8px 0 6px; letter-spacing: -0.01em; }
+.split-col p { color: var(--muted); font-size: 0.92rem; margin-bottom: 20px; }
+.split-col ul { display: grid; gap: 9px; }
+.split-col ul li { position: relative; padding-left: 18px; font-size: 0.92rem; color: rgba(245, 243, 238, 0.85); }
+.split-col ul li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 7px; height: 1px; background: var(--gold); }
+@media (max-width: 760px) { .split-grid { grid-template-columns: 1fr; } }
+
+/* ---- two flow sequences on /growth stacked with a small connector label ---- */
+.flow-pair { display: grid; gap: 56px; }
+.flow-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; }
+
+/* ---- simple page-level closing CTA (lighter than .final) ---- */
+.page-cta { padding: clamp(80px, 13vh, 150px) var(--gutter); max-width: var(--maxw); margin: 0 auto; border-top: 1px solid var(--line); text-align: center; }
+.page-cta h2 { font-weight: 850; text-transform: uppercase; letter-spacing: -0.03em; font-size: clamp(2rem, 5vw, 3.6rem); line-height: 1; font-variation-settings: 'wdth' 112; }
+.page-cta p { margin: 18px auto 0; color: var(--muted); max-width: 40ch; }
+.page-cta .final-ctas { justify-content: center; margin-top: 30px; }
+
+/* 8 capabilities: 4×2 on desktop, 2×4 on tablet, a single list on phones — never an orphaned empty cell. */
+@media (max-width: 1040px) { .caps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .process-list { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 44px; } }
+@media (max-width: 600px) { .caps-grid, .process-list { grid-template-columns: 1fr; } }
+
+/* ---- feature: copy + photograph (was a half-empty text block) ---- */
+.feature { padding: clamp(70px, 11vh, 120px) var(--gutter); max-width: var(--maxw); margin: 0 auto; border-top: 1px solid var(--line);
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 88px); align-items: center; }
+.feature-copy { display: grid; gap: 18px; }
+.feature-copy .lede { max-width: 46ch; margin-top: 8px; }
+.feature-media, .split-media { border-radius: var(--r); overflow: hidden; border: 1px solid var(--line); background: var(--card); }
+.feature-media { aspect-ratio: 4 / 3; }
+.feature-media img, .split-media img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.92); }
+.split-top { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(32px, 5vw, 88px); align-items: end; margin-bottom: clamp(40px, 7vh, 80px); }
+.split-top .split-head { margin-bottom: 0; }
+.split-top.is-flipped { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); }
+.split-top.is-flipped .split-media { order: -1; }
+.split-media { aspect-ratio: 3 / 2; }
+.flow-label { margin-top: 56px; }
+@media (max-width: 900px) {
+  .feature, .split-top, .split-top.is-flipped { grid-template-columns: 1fr; align-items: start; }
+  .split-top.is-flipped .split-media { order: 0; }
+  .feature-media, .split-media { aspect-ratio: 16 / 10; }
+}
+
+/* ---- 404 ---- */
+.lost { min-height: 100vh; min-height: 100svh; max-width: var(--maxw); margin: 0 auto; padding: calc(var(--nav-h) + 48px) var(--gutter) 64px; display: grid; align-content: center; justify-items: start; gap: 22px; }
+.lost-code { font-weight: 870; font-size: clamp(5rem, 22vw, 17rem); line-height: 0.8; letter-spacing: -0.05em; font-variation-settings: 'wdth' 112; color: transparent; -webkit-text-stroke: 1px rgba(201, 164, 106, 0.55); }
+.lost .lede { max-width: 40ch; margin-top: 0; font-size: clamp(1.05rem, 1.25vw, 1.3rem); color: rgba(245, 243, 238, 0.82); }
+.lost-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.lost-contact { color: var(--muted); font-size: 0.92rem; }
+.lost-contact a { color: var(--gold-lt); border-bottom: 1px solid rgba(201, 164, 106, 0.4); }
+
+.illustrative-note { margin-top: 22px; font-size: 0.75rem; color: var(--muted); letter-spacing: 0.06em; }
+.split .lede { margin-top: 18px; }
+.split + .split { margin-top: 0; }

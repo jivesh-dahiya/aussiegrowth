@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="color-scheme" content="dark">
+  <title>Admin — Aussie Growth</title>
+  <link rel="icon" href="/assets/aussie-growth-mark-96.png" type="image/png">
+  <style>
+    :root{--bg:#080808;--panel:#101010;--line:rgba(255,255,255,.1);--line2:rgba(255,255,255,.18);--text:#f4f1ea;--muted:#9a9a9a;--gold:#c9a46a;--gold-lt:#e8cf9c;--red:#d9776a}
+    *{box-sizing:border-box;margin:0}
+    body{background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;min-height:100vh;display:grid;place-items:center;padding:24px}
+    .card{width:100%;max-width:380px}
+    .logo{display:flex;align-items:center;gap:12px;margin-bottom:34px}
+    .logo img{width:52px;height:52px}
+    .logo b{display:block;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase}
+    .logo span{display:block;font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+    h1{font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:22px;font-weight:600}
+    label{display:block;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+    input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:13px 14px;color:var(--text);font:inherit;margin-bottom:18px}
+    input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,164,106,.14)}
+    button{width:100%;background:var(--gold);color:#0b0906;border:0;border-radius:8px;padding:14px;font:inherit;font-weight:700;letter-spacing:.06em;cursor:pointer}
+    button:hover{background:var(--gold-lt)}button:disabled{opacity:.6;cursor:wait}
+    .err{min-height:1.4em;margin-top:14px;font-size:.85rem;color:var(--red)}
+    .home{display:inline-block;margin-top:26px;font-size:.78rem;color:var(--muted);text-decoration:none}
+    .home:hover{color:var(--gold-lt)}
+    :focus-visible{outline:2px solid var(--gold-lt);outline-offset:2px}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="logo"><img src="/assets/aussie-growth-mark-96.png" alt="Aussie Growth" width="52" height="52"><div><b>Aussie Growth</b><span>Admin</span></div></div>
+    <h1>Log in</h1>
+    <form id="f" novalidate>
+      <label for="email">Email / username</label>
+      <input id="email" name="email" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="254" required>
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" maxlength="200" required>
+      <button id="go" type="submit">LOGIN →</button>
+      <p class="err" id="err" role="alert"></p>
+    </form>
+    <a class="home" href="/">← Back to site</a>
+  </main>
+  <script src="/admin/login.js" defer></script>
+</body>
+</html>
