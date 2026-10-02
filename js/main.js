@@ -25,7 +25,10 @@ const $ = (s) => document.querySelector(s);
 const loader = initLoader();
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const { gsap, ScrollTrigger } = window;
-const cinematic = !reduced && !!gsap && !!ScrollTrigger;
+// A phone on its side has no room for a one-viewport pinned stage (copy + screen): it gets the
+// stacked layout, same as reduced motion.
+const cramped = matchMedia('(max-width: 999px) and (max-height: 480px)');
+const cinematic = !reduced && !cramped.matches && !!gsap && !!ScrollTrigger;
 
 if (!reduced && (!gsap || !ScrollTrigger)) {
   // Genuinely unexpected (e.g. a corrupted/missing local file) — not a
@@ -63,9 +66,12 @@ if (cinematic) {
   // Crossing the desktop/mobile breakpoint changes the choreography — rebuild cleanly.
   const mq = matchMedia('(min-width: 1000px)');
   mq.addEventListener('change', () => location.reload());
+  cramped.addEventListener('change', () => location.reload());
 } else {
   initVideos($('[data-reel]'));
   initFlow(null);
+  // Turned back upright: there is room for the cinematic layout again.
+  if (!reduced && gsap && ScrollTrigger) cramped.addEventListener('change', () => location.reload());
 }
 
 // Everything above is synchronous, so the page is laid out. Lift the loader once the display

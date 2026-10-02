@@ -35,7 +35,9 @@
 
 /* ================= Reset ================= */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-padding-top: var(--nav-h); }
+/* overflow-x on <html> as well as <body>: with only body set, the value is handed to the viewport and
+   off-screen animation states still widen the page (phones then zoom out to fit it). */
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: var(--nav-h); overflow-x: clip; }
 body {
   margin: 0;
   background: var(--bg);
@@ -161,20 +163,22 @@ body::after {
 .logo-text { display: inline-flex; flex-direction: column; gap: 5px; }
 .logo-word {
   font-weight: 900; text-transform: uppercase; font-size: 1.12rem; letter-spacing: -0.01em;
-  font-variation-settings: 'wdth' 115;
+  font-variation-settings: 'wdth' 115; white-space: nowrap;
 }
+@media (max-width: 360px) { .nav { gap: 12px; } .nav .logo-word { font-size: 1rem; } .nav .logo-sub { letter-spacing: 0.34em; } }
 .logo-word b { font-weight: 900; background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .logo-sub { font-size: 0.52rem; letter-spacing: 0.42em; text-transform: uppercase; color: var(--muted); padding-left: 1px; }
 .nav-links { display: flex; align-items: center; gap: clamp(18px, 2.4vw, 40px); }
-.nav-links a, .nav-talk {
+/* Direct children only: the "What we do" option cards are links inside .nav-links too. */
+.nav-links > a, .nav-talk {
   position: relative; font-size: 0.78rem; letter-spacing: 0.06em; color: rgba(245, 243, 238, 0.78); padding: 6px 0;
   transition: color 0.3s;
 }
-.nav-links a::after {
+.nav-links > a::after {
   content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--gold);
   transform: scaleX(0); transform-origin: right; transition: transform 0.45s var(--ease);
 }
-.nav-links a:hover::after, .nav-links a.is-active::after { transform: scaleX(1); transform-origin: left; }
+.nav-links > a:hover::after, .nav-links > a.is-active::after { transform: scaleX(1); transform-origin: left; }
 
 /* ---- What we do: two-option service selector ---- */
 .what-we-do { position: relative; }
@@ -182,22 +186,29 @@ body::after {
   font-size: 0.78rem; letter-spacing: 0.06em; color: rgba(245, 243, 238, 0.78); padding: 6px 0;
   display: inline-flex; align-items: center; gap: 6px; transition: color 0.3s;
 }
-.wwd-trigger::after { content: '▾'; font-size: 0.6em; opacity: 0.7; transition: transform 0.3s var(--ease); }
+.wwd-trigger::after {
+  content: ''; width: 5px; height: 5px; margin: -3px 0 0 2px; border: solid currentColor; border-width: 0 1.5px 1.5px 0;
+  opacity: 0.7; transform: rotate(45deg); transition: transform 0.3s var(--ease), margin 0.3s var(--ease);
+}
 .what-we-do:hover .wwd-trigger, .wwd-trigger[aria-expanded='true'] { color: var(--gold-lt); }
-.wwd-trigger[aria-expanded='true']::after { transform: rotate(180deg); }
+.wwd-trigger[aria-expanded='true']::after { transform: rotate(-135deg); margin-top: 3px; }
 .wwd-panel {
-  position: absolute; top: calc(100% + 22px); left: 50%; width: min(72vw, 620px);
+  position: absolute; top: calc(100% + 22px); left: 50%; width: min(72vw, 720px);
   display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line);
-  border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+  border: 1px solid var(--line); border-radius: 14px;
   background-color: #0e0e0e; box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.6);
   opacity: 0; visibility: hidden; transform: translate(-50%, -6px); transition: opacity 0.3s var(--ease), transform 0.3s var(--ease), visibility 0s 0.3s;
 }
 .wwd-panel.is-open { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition: opacity 0.3s var(--ease), transform 0.3s var(--ease); }
+/* Bridges the gap between the trigger and the panel, so the pointer never "leaves" on the way down. */
+.wwd-panel::before { content: ''; position: absolute; left: 0; right: 0; bottom: 100%; height: 24px; }
 .wwd-opt {
   position: relative; grid-row: 1; background: #101010; padding: 26px 24px 22px; display: flex; flex-direction: column; gap: 10px;
   transition: background 0.3s var(--ease);
 }
+.wwd-opt:first-of-type { border-radius: 13px 0 0 13px; }
 .wwd-opt:hover, .wwd-opt:focus-visible { background: #151515; }
+.wwd-opt:focus-visible { outline-offset: -3px; }
 .wwd-n { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.14em; }
 .wwd-t { font-weight: 800; font-size: 1.02rem; letter-spacing: -0.01em; }
 .wwd-l { font-size: 0.84rem; color: var(--muted); line-height: 1.35; }
@@ -206,14 +217,13 @@ body::after {
 
 .wwd-preview { display: none; }
 @media (min-width: 1000px) {
-  .wwd-panel { grid-template-columns: 1fr 1fr 0.9fr; }
-  .wwd-preview { display: block; position: relative; grid-row: 1; overflow: hidden; background: #0a0a0a; }
-  .wwd-preview img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.35s var(--ease); filter: saturate(0.85) brightness(0.72); }
+  .wwd-panel { grid-template-columns: 1fr 1fr 1.05fr; }
+  .wwd-preview { display: block; position: relative; grid-row: 1; overflow: hidden; background: #0a0a0a; border-radius: 0 13px 13px 0; }
+  .wwd-preview img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left top; opacity: 0; transition: opacity 0.35s var(--ease); filter: saturate(0.85) brightness(0.72); }
   .wwd-preview img.is-on { opacity: 1; }
 }
 @media (max-width: 999px) { .what-we-do { display: none; } }
-.nav-links a:hover, .nav-links a.is-active, .nav-talk:hover { color: var(--text); }
-.nav-links a:hover::after, .nav-links a.is-active::after { transform: scaleX(1); transform-origin: left; }
+.nav-links > a:hover, .nav-links > a.is-active, .nav-talk:hover { color: var(--text); }
 .nav-actions { display: flex; align-items: center; gap: 22px; }
 .nav-toggle { display: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line-2); place-items: center; }
 .burger, .burger::before { display: block; width: 16px; height: 1.5px; background: var(--text); transition: transform 0.35s var(--ease); }

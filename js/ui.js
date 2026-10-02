@@ -14,10 +14,11 @@ export function initNav() {
   onScroll();
 
   // Active section highlight
-  const links = new Map([...nav.querySelectorAll('.nav-links a')].map((a) => [a.hash.slice(1), a]));
+  const links = new Map([...nav.querySelectorAll('.nav-links > a')].map((a) => [a.hash.slice(1), a]));
+  // On while its section crosses the middle of the viewport, off once it leaves — so sections
+  // without a nav link (the story, the quote form) don't inherit the previous highlight.
   const io = new IntersectionObserver((es) => es.forEach((e) => {
-    if (!e.isIntersecting) return;
-    links.forEach((a, id) => a.classList.toggle('is-active', id === e.target.id));
+    links.get(e.target.id)?.classList.toggle('is-active', e.isIntersecting);
   }), { rootMargin: '-45% 0px -50% 0px' });
   links.forEach((_, id) => { const el = document.getElementById(id); if (el) io.observe(el); });
 
@@ -58,7 +59,11 @@ export function initWhatWeDo() {
     if (open) showPreview(opts[0].dataset.wwdPreview);
   };
 
-  trigger.addEventListener('click', () => set(trigger.getAttribute('aria-expanded') !== 'true'));
+  trigger.addEventListener('click', (e) => {
+    // A mouse click lands after hover has already opened the panel: keep it open instead of toggling it shut.
+    const hovering = canHover && e.detail > 0 && root.matches(':hover');
+    set(hovering || trigger.getAttribute('aria-expanded') !== 'true');
+  });
   opts.forEach((a) => a.addEventListener('mouseenter', () => showPreview(a.dataset.wwdPreview)));
   opts.forEach((a) => a.addEventListener('focus', () => showPreview(a.dataset.wwdPreview)));
 
@@ -137,7 +142,8 @@ export function initFlow(ScrollTrigger) {
     const items = [...flow.children];
     const paint = (p) => {
       flow.style.setProperty('--lit', p.toFixed(3));
-      items.forEach((li, i) => li.classList.toggle('is-lit', p >= i / (items.length - 1) - 0.001));
+      // Each dot sits at the start of its column (i / n along the line), so that is when the line reaches it.
+      items.forEach((li, i) => li.classList.toggle('is-lit', p >= i / items.length - 0.001));
     };
     if (!ScrollTrigger) return paint(1);
     ScrollTrigger.create({ trigger: flow, start: 'top 85%', end: 'bottom 45%', scrub: true, onUpdate: (s) => paint(s.progress) });

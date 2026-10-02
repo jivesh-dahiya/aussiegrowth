@@ -3,7 +3,8 @@
    Default (no JS / reduced motion): three readable stacked panels.
    html.cinematic: one pinned stage that transforms as you scroll.
    ===================================================================== */
-.story { position: relative; }
+/* overflow-x: the words that have slid out sideways stay in the box model after the pin releases. */
+.story { position: relative; overflow-x: clip; }
 .story-stage {
   position: relative;
   max-width: var(--maxw); margin: 0 auto;
@@ -92,13 +93,13 @@
 .pin-pulse { fill: var(--gold); opacity: 0.25; transform-box: fill-box; transform-origin: center; animation: pulse 2.2s var(--ease) infinite; }
 @keyframes pulse { from { transform: scale(0.4); opacity: 0.5; } to { transform: scale(2.2); opacity: 0; } }
 .map-card {
-  position: absolute; left: 50%; top: 58%; translate: -50% 0; width: min(290px, 80%);
+  position: absolute; left: 50%; top: min(58%, calc(100% - 132px)); translate: -50% 0; width: min(290px, 80%); /* never hangs out of a short map */
   background: rgba(23, 23, 23, 0.94); border: 1px solid rgba(201, 164, 106, 0.45); border-radius: 14px; padding: 14px 16px;
   display: grid; gap: 3px; font-size: 0.78rem; color: var(--muted);
 }
 .map-card b { color: var(--text); font-size: 0.98rem; }
 
-.scene-leads { display: grid; align-content: center; justify-items: center; gap: 10px; padding: 24px; }
+.scene-leads { display: grid; align-content: safe center; justify-items: center; gap: 10px; padding: 24px; }
 .note {
   width: min(360px, 92%); display: grid; grid-template-columns: 40px 1fr; column-gap: 12px; align-items: center;
   background: #f5f3ee; color: #161616; border-radius: 16px; padding: 12px 14px;
@@ -109,7 +110,7 @@
 .ic { grid-row: span 2; width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; font-style: normal; font-weight: 800; color: #fff; }
 .ic-call { background: #2f8f4e; } .ic-mail { background: #b84a3c; } .ic-quote { background: var(--gold-dk); } .ic-cal { background: #3a62b8; }
 
-.scene-paid { background: #0d0d0d; padding: clamp(18px, 3vw, 34px); display: grid; align-content: center; gap: 22px; }
+.scene-paid { background: #0d0d0d; padding: clamp(18px, 3vw, 34px); display: grid; align-content: safe center; gap: 22px; }
 .pipe { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
 .pipe li { position: relative; padding-top: 18px; }
 .pipe li::before { content: ''; position: absolute; top: 0; left: 0; width: 9px; height: 9px; border-radius: 50%; background: #333; z-index: 1; }
@@ -126,7 +127,10 @@
 
 .scribble, .scroll-hint { display: none; }
 
-/* Static (default) layout: each scene gets its own frame so nothing hides. */
+/* Static (default) layout: each scene gets its own frame so nothing hides.
+   Nothing scrubs the pipeline here, so it shows where the story ends: paid. */
+html:not(.cinematic) .pipe-fill { transform: scaleX(1); }
+html:not(.cinematic) .status i { transform: translateY(-66.667%); }
 .screen-body .scene { aspect-ratio: 16 / 10; border-top: 1px solid var(--line); }
 .screen-body .scene:first-child { border-top: 0; }
 
@@ -145,9 +149,27 @@
 .cinematic .panels { gap: 0; }
 .cinematic .panel { grid-area: 1 / 1; }
 .cinematic .panel + .panel .hl-get { opacity: 0; }
+@media (min-width: 1000px) {
+  /* "BOOKED." is the widest word. Capped so it can lean into the gutter but never onto the screen,
+     and tied to the viewport height so the stage still fits a short laptop window. */
+  .cinematic .hl { font-size: clamp(3.9rem, min(8.2vw, 15.5vh), 7.6rem); }
+}
+/* Short desktop windows: the stage is exactly one viewport tall, so the copy tightens to fit it. */
+@media (min-width: 1000px) and (max-height: 780px) {
+  .cinematic .story-stage { padding-top: calc(var(--nav-h) + 14px); }
+  .cinematic .hl { font-size: clamp(3rem, min(8.2vw, 13vh), 7.6rem); }
+  .cinematic .panel-index { margin-bottom: 8px; }
+  .cinematic .panel-index b { font-size: 2rem; }
+  .cinematic .lede { margin-top: 16px; }
+  .cinematic .chips { margin-top: 18px; }
+  .cinematic .kicker { margin-top: 14px; }
+  .cinematic .story-ctas { margin-top: 22px; }
+}
+@media (min-width: 1000px) and (max-height: 680px) { .cinematic .chips { display: none; } }
+@media (min-width: 1000px) and (max-height: 560px) { .cinematic .eyebrow { display: none; } }
 .cinematic .story-visual { position: relative; top: auto; height: min(62vh, 600px); }
 .cinematic .screen { position: absolute; inset: 0; }
-.cinematic .screen-body { position: absolute; inset: 38px 0 0; }
+.cinematic .screen-body { position: absolute; inset: 38px 0 0; overflow: hidden; /* scenes scale mid-transition: never over the address bar */ }
 .cinematic .screen-body .scene { position: absolute; inset: 0; aspect-ratio: auto; border: 0; }
 .cinematic .scene-leads { background: linear-gradient(rgba(8, 8, 8, 0.35), rgba(8, 8, 8, 0.75)); }
 
@@ -179,9 +201,35 @@
   .cinematic .story-visual { height: auto; min-height: 0; align-self: stretch; margin-bottom: 64px; }
   .cinematic .scribble { display: none; }
   .cinematic .scroll-hint { left: var(--gutter); right: auto; bottom: 18px; }
-  .cinematic .note { padding: 9px 12px; }
-  .cinematic .jobs li { padding: 10px 12px; }
+  /* The screen is short here: every scene is recomposed to fit inside it. */
+  .cinematic .scene-search { padding: 12px 14px; gap: 8px; }
+  .cinematic .search-bar { padding: 9px 14px; font-size: 0.86rem; }
+  .cinematic .result { padding: 10px 12px; gap: 2px; line-height: 1.35; }
+  .cinematic .result.ghost { display: none; }
+  .cinematic .search-foot { margin-top: 0; font-size: 0.95rem; line-height: 1.2; }
+  .cinematic .map-card { top: auto; bottom: 12px; padding: 10px 12px; line-height: 1.35; }
+  .cinematic .scene-leads { padding: 10px 14px; gap: 6px; }
+  .cinematic .note { padding: 7px 10px; grid-template-columns: 30px 1fr; column-gap: 10px; border-radius: 12px; line-height: 1.25; }
+  .cinematic .note b { font-size: 0.82rem; }
+  .cinematic .note span { font-size: 0.7rem; }
+  .cinematic .ic { width: 30px; height: 30px; border-radius: 9px; font-size: 0.8rem; }
+  .cinematic .scene-paid { padding: 12px 14px; gap: 10px; }
+  .cinematic .jobs { gap: 6px; }
+  .cinematic .jobs li { padding: 8px 12px; gap: 10px; line-height: 1.25; }
+  .cinematic .pipe { line-height: 1.2; }
+  .cinematic .illustrative { font-size: 0.56rem; letter-spacing: 0.08em; line-height: 1.3; }
 }
+/* Short phones: the copy gives height back to the screen, and the scenes drop a row each. */
 @media (max-width: 999px) and (max-height: 700px) {
   .cinematic .panel-index, .cinematic .eyebrow { display: none; }
+  .cinematic .story-stage { padding-top: calc(var(--nav-h) + 6px); gap: 12px; }
+  .cinematic .hl { font-size: clamp(2.6rem, 13.5vw, 5.5rem); }
+  .cinematic .lede { margin-top: 10px; font-size: 0.95rem; }
+  .cinematic .kicker { margin-top: 8px; font-size: 0.85rem; }
+  .cinematic .kicker em { font-size: 1.2em; }
+}
+@media (max-width: 999px) and (max-height: 600px) {
+  .cinematic .kicker, .cinematic .note:nth-child(n + 4), .cinematic .jobs li:nth-child(n + 3) { display: none; }
+  .cinematic .panels { margin-top: 0; }
+  .cinematic .scene-paid { padding: 10px 14px; gap: 8px; }
 }

@@ -279,9 +279,13 @@ async function suite(label, usePg) {
   await page.goto(base + '/'); await page.hover('[data-wwd-trigger]'); await page.waitForTimeout(300);
   assert.ok(await page.locator('[data-wwd-panel].is-open').count());
   assert.equal(await page.locator('.wwd-opt').count(), 2);
+  // the option cards are links inside .nav-links: the plain nav-link rules must not restyle them
+  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.wwd-opt')).paddingLeft), '24px', 'dropdown option lost its padding');
+  await page.click('[data-wwd-trigger]'); await page.waitForTimeout(200);
+  assert.ok(await page.locator('[data-wwd-panel].is-open').count(), 'clicking the hovered trigger closed the panel');
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   assert.equal(await page.locator('[data-wwd-panel].is-open').count(), 0);
-  ok('What we do: exactly two options, opens on hover, closes on Escape');
+  ok('What we do: exactly two padded options, opens on hover, stays open on click, closes on Escape');
   await page.mouse.move(700, 450);
   const steps = new Set();
   for (let i = 0; i < 40; i++) { await page.mouse.wheel(0, 300); await page.waitForTimeout(90); steps.add(await page.evaluate(() => document.querySelector('[data-progress] li.is-active')?.dataset.step)); }

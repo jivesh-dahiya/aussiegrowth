@@ -130,8 +130,10 @@ export function initStory({ gsap, ScrollTrigger, ready = Promise.resolve() }) {
     scrub: 0.7,
     animation: tl,
     invalidateOnRefresh: true,
-    onUpdate: sync,
     onToggle: (self) => progress?.classList.toggle('is-on', self.isActive),
   });
+  // Follow the timeline, not the scroll event: with scrub the timeline is still catching up after
+  // the last scroll event, which left the step indicator and address bar a scene behind.
+  tl.eventCallback('onUpdate', sync);
   sync();
 }
